@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'pxb.android'
+version = '2.0'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+repositories {
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version:'4.10'
+}
+tasks.withType(Compile) {
+    options.encoding = 'UTF-8'
+}
