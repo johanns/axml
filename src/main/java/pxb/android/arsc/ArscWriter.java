@@ -15,68 +15,24 @@
  */
 package pxb.android.arsc;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import pxb.android.ResConst;
 import pxb.android.StringItem;
 import pxb.android.StringItems;
 import pxb.android.axml.Util;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.*;
+
 /**
  * Write pkgs to an arsc file
- * 
- * @see ArscParser
+ *
  * @author bob
- * 
+ * @see ArscParser
  */
 public class ArscWriter implements ResConst {
-    private static class PkgCtx {
-        Map<String, StringItem> keyNames = new HashMap<String, StringItem>();
-        StringItems keyNames0 = new StringItems();
-        public int keyStringOff;
-        int offset;
-        Pkg pkg;
-        int pkgSize;
-        List<StringItem> typeNames = new ArrayList<StringItem>();
-
-        StringItems typeNames0 = new StringItems();
-        int typeStringOff;
-
-        public void addKeyName(String name) {
-            if (keyNames.containsKey(name)) {
-                return;
-            }
-            StringItem stringItem = new StringItem(name);
-            keyNames.put(name, stringItem);
-            keyNames0.add(stringItem);
-        }
-
-        public void addTypeName(int id, String name) {
-            while (typeNames.size() <= id) {
-                typeNames.add(null);
-            }
-
-            StringItem item = typeNames.get(id);
-            if (item == null) {
-                typeNames.set(id, new StringItem(name));
-            } else {
-                throw new RuntimeException();
-            }
-        }
-    }
-
-    private static void D(String fmt, Object... args) {
-
-    }
-
     private List<PkgCtx> ctxs = new ArrayList<PkgCtx>(5);
     private List<Pkg> pkgs;
     private Map<String, StringItem> strTable = new TreeMap<String, StringItem>();
@@ -84,6 +40,10 @@ public class ArscWriter implements ResConst {
 
     public ArscWriter(List<Pkg> pkgs) {
         this.pkgs = pkgs;
+    }
+
+    private static void D(String fmt, Object... args) {
+
     }
 
     public static void main(String... args) throws IOException {
@@ -148,7 +108,7 @@ public class ArscWriter implements ResConst {
             for (Type type : ctx.pkg.types.values()) {
                 type.wPosition = size + pkgSize;
                 pkgSize += 8 + 4 + 4 + 4 * type.specs.length; // trunk,id,entryCount,
-                                                              // configs
+                // configs
 
                 for (Config config : type.configs) {
                     config.wPosition = pkgSize + size;
@@ -394,6 +354,41 @@ public class ArscWriter implements ResConst {
             out.putInt(strTable.get(value.raw).index);
         } else {
             out.putInt(value.data);
+        }
+    }
+
+    private static class PkgCtx {
+        public int keyStringOff;
+        Map<String, StringItem> keyNames = new HashMap<String, StringItem>();
+        StringItems keyNames0 = new StringItems();
+        int offset;
+        Pkg pkg;
+        int pkgSize;
+        List<StringItem> typeNames = new ArrayList<StringItem>();
+
+        StringItems typeNames0 = new StringItems();
+        int typeStringOff;
+
+        public void addKeyName(String name) {
+            if (keyNames.containsKey(name)) {
+                return;
+            }
+            StringItem stringItem = new StringItem(name);
+            keyNames.put(name, stringItem);
+            keyNames0.add(stringItem);
+        }
+
+        public void addTypeName(int id, String name) {
+            while (typeNames.size() <= id) {
+                typeNames.add(null);
+            }
+
+            StringItem item = typeNames.get(id);
+            if (item == null) {
+                typeNames.set(id, new StringItem(name));
+            } else {
+                throw new RuntimeException();
+            }
         }
     }
 

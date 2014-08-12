@@ -1,13 +1,12 @@
 package pxb.android.axml.test;
 
-import java.io.File;
-
 import org.junit.Test;
-
 import pxb.android.axml.AxmlReader;
 import pxb.android.axml.AxmlWriter;
 import pxb.android.axml.DumpAdapter;
 import pxb.android.axml.Util;
+
+import java.io.File;
 
 public class Test2 {
     @Test

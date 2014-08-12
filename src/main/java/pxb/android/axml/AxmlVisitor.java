@@ -17,7 +17,7 @@ package pxb.android.axml;
 
 /**
  * visitor to visit an axml
- * 
+ *
  * @author <a href="mailto:pxb1988@gmail.com">Panxiaobo</a>
  */
 public class AxmlVisitor extends NodeVisitor {
@@ -33,7 +33,7 @@ public class AxmlVisitor extends NodeVisitor {
 
     /**
      * create a ns
-     * 
+     *
      * @param prefix
      * @param uri
      * @param ln

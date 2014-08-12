@@ -17,8 +17,8 @@ package pxb.android.arsc;
 
 public class Value {
     public final int data;
-    public String raw;
     public final int type;
+    public String raw;
 
     public Value(int type, int data, String raw) {
         super();

@@ -24,7 +24,7 @@ public class ResEntry {
      */
     public Object value;
 
-    /* package */int wOffset;
+    /* package */ int wOffset;
 
     public ResEntry(int flag, ResSpec spec) {
         super();

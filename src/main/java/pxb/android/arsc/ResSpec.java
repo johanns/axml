@@ -16,8 +16,8 @@
 package pxb.android.arsc;
 
 public class ResSpec {
-    public int flags;
     public final int id;
+    public int flags;
     public String name;
 
     public ResSpec(int id) {

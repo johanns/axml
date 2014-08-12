@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * dump axml to stdout
- * 
+ *
  * @author <a href="mailto:pxb1988@gmail.com">Panxiaobo</a>
  */
 public class DumpAdapter extends AxmlVisitor {

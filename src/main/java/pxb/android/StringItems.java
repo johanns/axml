@@ -25,6 +25,8 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class StringItems extends ArrayList<StringItem> {
     static final int UTF8_FLAG = 0x00000100;
+    byte[] stringData;
+    private boolean useUTF8 = true;
 
     @SuppressWarnings("unused")
     public static String[] read(ByteBuffer in) throws IOException {
@@ -35,7 +37,9 @@ public class StringItems extends ArrayList<StringItem> {
         int stringDataOffset = in.getInt();
         int stylesOffset = in.getInt();
         int offsets[] = new int[stringCount];
+
         String strings[] = new String[stringCount];
+
         for (int i = 0; i < stringCount; i++) {
             offsets[i] = in.getInt();
         }
@@ -43,6 +47,7 @@ public class StringItems extends ArrayList<StringItem> {
         if (stylesOffset != 0) {
             System.err.println("ignore style offset at 0x" + Integer.toHexString(trunkOffset));
         }
+
         int base = trunkOffset + stringDataOffset;
         for (int i = 0; i < offsets.length; i++) {
             in.position(base + offsets[i]);
@@ -53,6 +58,7 @@ public class StringItems extends ArrayList<StringItem> {
                 int u8len = u8length(in);
                 int start = in.position();
                 int blength = u8len;
+
                 while (in.get(start + blength) != 0) {
                     blength++;
                 }
@@ -68,6 +74,7 @@ public class StringItems extends ArrayList<StringItem> {
 
     static int u16length(ByteBuffer in) {
         int length = in.getShort() & 0xFFFF;
+
         if (length > 0x7FFF) {
             length = ((length & 0x7FFF) << 8) | (in.getShort() & 0xFFFF);
         }
@@ -76,13 +83,12 @@ public class StringItems extends ArrayList<StringItem> {
 
     static int u8length(ByteBuffer in) {
         int len = in.get() & 0xFF;
+
         if ((len & 0x80) != 0) {
             len = ((len & 0x7F) << 8) | (in.get() & 0xFF);
         }
         return len;
     }
-
-    byte[] stringData;
 
     public int getSize() {
         return 5 * 4 + this.size() * 4 + stringData.length + 0;// TODO
@@ -94,20 +100,26 @@ public class StringItems extends ArrayList<StringItem> {
                 useUTF8 = false;
             }
         }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.reset();
+
         int i = 0;
         int offset = 0;
-        baos.reset();
+
         Map<String, Integer> map = new HashMap<String, Integer>();
+
         for (StringItem item : this) {
             item.index = i++;
             String stringData = item.data;
             Integer of = map.get(stringData);
+
             if (of != null) {
                 item.dataOffset = of;
             } else {
                 item.dataOffset = offset;
                 map.put(stringData, offset);
+
                 if (useUTF8) {
                     int length = stringData.length();
                     byte[] data = stringData.getBytes("UTF-8");
@@ -123,6 +135,7 @@ public class StringItems extends ArrayList<StringItem> {
                         offset++;
                         baos.write((u8lenght >> 8) | 0x80);
                     }
+
                     baos.write(u8lenght);
                     baos.write(data);
                     baos.write(0);
@@ -130,12 +143,14 @@ public class StringItems extends ArrayList<StringItem> {
                 } else {
                     int length = stringData.length();
                     byte[] data = stringData.getBytes("UTF-16LE");
+
                     if (length > 0x7FFF) {
                         int x = (length >> 16) | 0x8000;
                         baos.write(x);
                         baos.write(x >> 8);
                         offset += 2;
                     }
+
                     baos.write(length);
                     baos.write(length >> 8);
                     baos.write(data);
@@ -149,17 +164,17 @@ public class StringItems extends ArrayList<StringItem> {
         stringData = baos.toByteArray();
     }
 
-    private boolean useUTF8 = true;
-
     public void write(ByteBuffer out) throws IOException {
         out.putInt(this.size());
         out.putInt(0);// TODO style count
         out.putInt(useUTF8 ? UTF8_FLAG : 0);
         out.putInt(7 * 4 + this.size() * 4);
         out.putInt(0);
+
         for (StringItem item : this) {
             out.putInt(item.dataOffset);
         }
+
         out.put(stringData);
         // TODO
     }

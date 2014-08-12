@@ -15,18 +15,17 @@
  */
 package pxb.android.arsc;
 
+import pxb.android.axml.Util;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pxb.android.axml.Util;
-
 /**
  * dump an arsc file
- * 
+ *
  * @author bob
- * 
  */
 public class ArscDumper {
     public static void dump(List<Pkg> pkgs) {
