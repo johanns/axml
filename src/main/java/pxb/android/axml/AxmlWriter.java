@@ -372,6 +372,8 @@ public class AxmlWriter extends AxmlVisitor {
                     out.putInt(((StringItem) attr.value).index);
                 } else if (v instanceof Boolean) {
                     out.putInt(Boolean.TRUE.equals(v) ? -1 : 0);
+                } else if (v instnaceof String) {
+                    out.putIn(Integer.parseInt((String) v);
                 } else {
                     out.putInt((Integer) attr.value);
                 }
@@ -400,10 +402,6 @@ public class AxmlWriter extends AxmlVisitor {
             out.putInt(ns != null ? this.ns.index : -1);
             out.putInt(name.index);
         }
-
-
-
-
     }
 
     static class Ns {
